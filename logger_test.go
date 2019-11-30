@@ -3,7 +3,6 @@ package log
 import (
 	"log"
 	"os"
-	"runtime"
 	"testing"
 )
 
@@ -12,10 +11,7 @@ var textLogger, jsonLogger *Logger
 func init() {
 
 	// log file
-	file, _ := os.OpenFile("D:/test.log", os.O_TRUNC|os.O_CREATE|os.O_WRONLY, os.ModeAppend)
-	runtime.SetFinalizer(file, func(f *os.File) {
-		_ = f.Close()
-	})
+	file, _ := os.OpenFile("testdata/test.log", os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 
 	// text logger
 	textLogger = New(
@@ -32,7 +28,7 @@ func init() {
 		WithStdLevel(TraceLevel),
 		WithOutput(file),
 		WithFileLine(true),
-		WithFormatter(&JsonFormatter{IgnoreBasicFields: true}),
+		WithFormatter(&JsonFormatter{IgnoreBasicFields: false}),
 	)
 
 	// overwrite the go std lib log
@@ -48,27 +44,11 @@ func BenchmarkLogger_TextInfof(b *testing.B) {
 	}
 }
 
-// go test -test.bench BenchmarkLogger_TextKvFmt -test.count=1 -test.benchtime=1s -test.benchmem
-// BenchmarkLogger_TextKvFmt-4       200000              5485 ns/op             216 B/op          3 allocs/op
-func BenchmarkLogger_TextKvFmt(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		textLogger.InfoKvln("aaa,bbb,ccc,ddd,eee,fff,ggg,hhh", 1, 2, 3, 4, 5, 6, 7, 8)
-	}
-}
-
 // go test -test.bench BenchmarkLogger_JsonInfof -test.count=1 -test.benchtime=1s -test.benchmem
 // BenchmarkLogger_JsonInfof-4       200000              5980 ns/op            1144 B/op         17 allocs/op
 func BenchmarkLogger_JsonInfof(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		jsonLogger.Infof("BenchmarkLogger_JsonInfof %d\n", i)
-	}
-}
-
-// go test -test.bench BenchmarkLogger_JsonKvFmt -test.count=1 -test.benchtime=1s -test.benchmem
-// BenchmarkLogger_JsonKvFmt-4       200000              7540 ns/op            1080 B/op         14 allocs/op
-func BenchmarkLogger_JsonKvFmt(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		jsonLogger.InfoKvln("aaa,bbb,ccc,ddd,eee,fff,ggg,hhh", 1, 2, 3, 4, 5, 6, 7, 8)
 	}
 }
 

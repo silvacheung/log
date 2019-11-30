@@ -1,4 +1,4 @@
-module github.com/marcosxzhang/log
+module github.com/marcosxz/log
 
 go 1.12
 

@@ -28,14 +28,6 @@ func (f *TextFormatter) Format(e *Entry) error {
 		e.Buffer.WriteString(" ")
 	}
 
-	e.KvMap.Range(func(k string, v interface{}) bool {
-		e.Buffer.WriteString(k)
-		e.Buffer.WriteString("=")
-		e.Buffer.WriteString(fmt.Sprint(v)) // allocs
-		e.Buffer.WriteString(" ")
-		return true
-	})
-
 	if !f.IgnoreBasicFields {
 		e.Buffer.WriteString("message=")
 	}
