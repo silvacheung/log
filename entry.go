@@ -64,5 +64,6 @@ func (e *Entry) writer() {
 func (e *Entry) release() {
 	e.Args, e.Line, e.File, e.Format, e.Func = nil, 0, "", "", ""
 	e.Buffer.Reset()
+	// FIXED ME 'release the Map'
 	e.Logger.entryPool.Put(e)
 }
